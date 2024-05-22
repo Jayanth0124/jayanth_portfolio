@@ -530,17 +530,17 @@
                   <input type="text" name="name" class="form-control" id="name" required>
                 </div>
                 <div class="form-group col-md-6">
-                  <label for="name">Your Email</label>
+                  <label for="email">Your Email</label>
                   <input type="email" class="form-control" name="email" id="email" required>
                 </div>
               </div>
               <div class="form-group">
-                <label for="name">Subject</label>
+                <label for="subject">Subject</label>
                 <input type="text" class="form-control" name="subject" id="subject" required>
               </div>
               <div class="form-group">
-                <label for="name">Message</label>
-                <textarea class="form-control" name="message" rows="10" required></textarea>
+                <label for="message">Message</label>
+                <textarea class="form-control" name="message" rows="10" id="message" required></textarea>
               </div>
               <div class="my-3">
                 <div class="error-message"></div>
@@ -548,8 +548,7 @@
               </div>
               <div class="text-center"><button type="submit">Submit</button></div>
             </form>
-          </div>
-
+          </div>          
         </div>
 
       </div>
@@ -685,27 +684,61 @@
 
     </style>
 
-    <!-- JavaScript to handle form submission -->
+    <!-- Include EmailJS library -->
+    <script src="https://cdn.emailjs.com/dist/email.min.js"></script>
     <script type="text/javascript">
-      document.getElementById('contact-form').addEventListener('submit', function(event) {
-        event.preventDefault();
+      document.addEventListener('DOMContentLoaded', function() {
+        // Initialize EmailJS
+        emailjs.init('WrK1bJr8aSga8yCZg'); // Replace with your actual EmailJS user ID
 
-        // These IDs from the previous steps
-        const serviceID = 'service_pnvzq9b'; // Replace 'your_service_id' with your actual EmailJS service ID
-        const templateID = 'template_jpfi5x4'; // Replace 'your_template_id' with your actual EmailJS template ID
+        document.getElementById('contact-form').addEventListener('submit', function(event) {
+          event.preventDefault();
 
-        // Send the form data using EmailJS
-        emailjs.sendForm(serviceID, templateID, this)
-          .then(function(response) {
-            console.log('SUCCESS!', response.status, response.text);
-            alert('Your message has been sent successfully!');
-            document.getElementById('contact-form').reset(); // Reset form after successful submission
-          }, function(error) {
-            console.error('FAILED...', error);
-            alert('Failed to send your message. Please try again.');
-          });
+          // These IDs from the previous steps
+          const serviceID = 'service_pnvzq9b'; // Replace with your actual EmailJS service ID
+          const templateID = 'template_jpfi5x4'; // Replace with your actual EmailJS template ID
+
+          // Collect form data
+          const nameElement = document.getElementById('name');
+          const emailElement = document.getElementById('email');
+          const subjectElement = document.getElementById('subject');
+          const messageElement = document.querySelector('textarea[name="message"]');
+
+          if (!nameElement || !emailElement || !subjectElement || !messageElement) {
+            console.error('One or more form elements not found.');
+            alert('Form submission failed. Please check the form and try again.');
+            return;
+          }
+
+          const formData = {
+            to_name: 'Recipient Name', // Ensure this matches the variable in your EmailJS template
+            from_name: nameElement.value,
+            from_email: emailElement.value, // This should match the variable in your EmailJS template
+            subject: subjectElement.value,
+            message: messageElement.value
+          };
+
+          // Log form data to the console for debugging
+          console.log('Form Data:', formData);
+
+          // Send the form data using EmailJS
+          emailjs.send(serviceID, templateID, formData)
+            .then(function(response) {
+              console.log('SUCCESS!', response.status, response.text);
+              alert('Your message has been sent successfully!');
+              document.getElementById('contact-form').reset(); // Reset form after successful submission
+            }, function(error) {
+              console.error('FAILED...', error);
+              alert('Failed to send your message. Please try again.');
+            });
+        });
       });
     </script>
+
+
+
+
+
 
 
     
